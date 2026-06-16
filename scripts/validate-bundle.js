@@ -3,6 +3,11 @@
 
 const fs = require("fs");
 const path = require("path");
+const {
+  LOCKED_MAP_HELPER,
+  LEGACY_RU_HELPER,
+  validateModuleSyntax,
+} = require("./bundle-sanitize");
 
 const INDEX = path.join(__dirname, "..", "index.html");
 const html = fs.readFileSync(INDEX, "utf8");
@@ -42,13 +47,41 @@ const checks = [
     name: "lang toggle removed",
     ok: !html.includes('onClick:()=>U("he")'),
   },
+  {
+    name: "no duplicate W in BZ",
+    ok: !html.includes("lockedPositions:W}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]"),
+    bad: html.includes("lockedPositions:W}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]"),
+  },
+  {
+    name: "BZ editing state uses qN/rN",
+    ok: html.includes("[qN,rN]=S.useState(null)") && html.includes("editing:qN===F.id"),
+    bad: html.includes("lockedPositions:e}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]"),
+  },
+  {
+    name: "locked map helper uses safe name",
+    ok: html.includes(LOCKED_MAP_HELPER),
+    bad: html.includes(LEGACY_RU_HELPER),
+  },
+  {
+    name: "no duplicate locked map helper",
+    ok: !html.includes(LOCKED_MAP_HELPER + LOCKED_MAP_HELPER),
+  },
+  {
+    name: "module script syntax valid",
+    ok: validateModuleSyntax(html) === null,
+  },
 ];
 
 let failed = 0;
 for (const c of checks) {
   const pass = c.ok && !c.bad;
   console.log(pass ? "OK" : "FAIL", c.name);
-  if (!pass) failed++;
+  if (!pass) {
+    failed++;
+    if (c.name === "module script syntax valid") {
+      console.log("  ", validateModuleSyntax(html));
+    }
+  }
 }
 
 process.exit(failed ? 1 : 0);
