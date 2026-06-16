@@ -1,0 +1,243 @@
+/* WC 2026 mobile & enhancement styles (external to keep index.html patches small) */
+
+@media (max-width: 640px) {
+  .groups-page,
+  .schedule-page,
+  .bracket-page,
+  .stats-page,
+  .teams-page,
+  .stadiums-page {
+    padding: 20px 12px 72px;
+  }
+
+  .groups-header h1,
+  .schedule-header h1,
+  .bracket-header h1,
+  .stats-header h1,
+  .teams-header h1,
+  .stadiums-header h1 {
+    font-size: 32px;
+    letter-spacing: 1px;
+  }
+
+  .groups-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    padding-bottom: 4px;
+  }
+
+  .app-nav-btn {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .group-table {
+    overflow-x: auto;
+  }
+
+  .group-table-header,
+  .group-row {
+    min-width: 320px;
+  }
+
+  .bracket-col {
+    flex: 0 0 160px;
+  }
+
+  .bracket-header h1 {
+    font-size: 28px;
+  }
+
+  .thirds-row {
+    grid-template-columns: 32px 28px 1fr;
+    gap: 8px;
+  }
+
+  .thirds-stats,
+  .thirds-group:nth-child(n) {
+    display: none;
+  }
+
+  .modal-card {
+    padding: 20px 16px;
+    max-width: none;
+    margin: 0 8px;
+  }
+
+  .modal-inputs input {
+    width: 56px;
+    height: 48px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .groups-header h1,
+  .schedule-header h1,
+  .bracket-header h1,
+  .stats-header h1,
+  .teams-header h1 {
+    font-size: 26px;
+  }
+
+  .group-table-cols span:nth-child(5),
+  .group-table-cols span:nth-child(6),
+  .group-row-stats span:nth-child(5),
+  .group-row-stats span:nth-child(6) {
+    display: none;
+  }
+
+  .group-table-cols,
+  .group-row-stats {
+    grid-template-columns: repeat(5, 20px) 28px;
+  }
+
+  .bracket-col {
+    flex: 0 0 148px;
+  }
+
+  .bracket-match-side {
+    font-size: 11px;
+  }
+
+  .odds-grid,
+  .scenarios-grid,
+  .teams-group-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.schedule-team-filter {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.schedule-team-filter select,
+.teams-search-input {
+  width: min(100%, 320px);
+  padding: 10px 14px;
+  font-size: 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+}
+
+.bracket-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.bracket-preview-btn {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+  background: var(--bg-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  transition: all 0.12s;
+}
+
+.bracket-preview-btn.active {
+  background: var(--wc-gold);
+  color: var(--bg-0);
+  border-color: var(--wc-gold);
+}
+
+.bracket-preview-banner {
+  font-size: 12px;
+  color: var(--wc-gold);
+  text-align: center;
+  max-width: 520px;
+  line-height: 1.4;
+}
+
+.bracket-match.projected {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.bracket-match.locked-slot {
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.group-row.in-contention {
+  opacity: 0.92;
+}
+
+.group-row-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--status-win);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.inline-save-status,
+.modal-save-status {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--status-win);
+  min-width: 52px;
+  text-align: center;
+}
+
+.verdict-form {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.verdict-form-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--wc-green-mid);
+  margin-right: 8px;
+}
+
+.verdict-pre-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 8px;
+}
+
+body {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@media (max-width: 480px) {
+  #wc-score-sync {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: 12px;
+    left: 12px;
+    align-items: stretch;
+  }
+
+  #wc-score-sync-btn {
+    width: 100%;
+  }
+}
