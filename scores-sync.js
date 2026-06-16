@@ -2,6 +2,7 @@
   "use strict";
 
   const RESULTS_KEY = "wc2026.results.v1";
+  const DISMISSED_KEY = "wc2026.dismissed.v1";
   const META_KEY = "wc2026.sync.meta.v1";
   const FEED_URL =
     "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json";
@@ -54,6 +55,16 @@
     }
   }
 
+  function readDismissed() {
+    try {
+      const raw = localStorage.getItem(DISMISSED_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch {
+      return [];
+    }
+  }
+
   function writeResults(results) {
     localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
   }
@@ -96,6 +107,7 @@
 
   function mergeRemoteScores(matches) {
     const existing = readResults();
+    const dismissed = new Set(readDismissed());
     const next = { ...existing };
     let changed = 0;
     const groupCounter = { value: 1 };
@@ -113,6 +125,8 @@
 
       const incoming = scoreFromMatch(match);
       if (!incoming) continue;
+
+      if (dismissed.has(id)) continue;
 
       if (existing[id] != null) continue;
 
