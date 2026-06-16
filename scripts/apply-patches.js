@@ -10,6 +10,17 @@ const INDEX = path.join(ROOT, "index.html");
 /** @type {{ id: string, find: string, replace: string }[]} */
 const patches = [
   {
+    id: "favicon",
+    find: '<link rel="icon" type="image/svg+xml" href="" />',
+    replace:
+      '<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>" />',
+  },
+  {
+    id: "fc-autosave-semicolon",
+    find: "},[E,g,Y,Q,lA,cA,T,k,CV])function lN(G){",
+    replace: "},[E,g,Y,Q,lA,cA,T,k,CV]);function lN(G){",
+  },
+  {
     id: "mobile-css-link",
     find: "  </head>",
     replace: '    <link rel="stylesheet" href="mobile.css">\n  </head>',
@@ -34,7 +45,7 @@ const patches = [
     id: "fc-autosave",
     find: '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):"");S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G)}',
     replace:
-      '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):""),[sV,jN]=S.useState(!!m);S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G),jN(!0)}S.useEffect(()=>{const G=setTimeout(()=>{if(E===""&&g===""){A.result&&l();return}CV&&UN()},400);return()=>clearTimeout(G)},[E,g,Y,Q,lA,cA,T,k,CV])',
+      '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):""),[sV,jN]=S.useState(!!m);S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G),jN(!0)}S.useEffect(()=>{const G=setTimeout(()=>{if(E===""&&g===""){A.result&&l();return}CV&&UN()},400);return()=>clearTimeout(G)},[E,g,Y,Q,lA,cA,T,k,CV]);',
   },
   {
     id: "fc-save-button",
