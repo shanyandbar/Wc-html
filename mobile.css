@@ -39,12 +39,61 @@
   }
 
   .group-table {
-    overflow-x: auto;
+    overflow-x: visible;
   }
 
   .group-table-header,
   .group-row {
-    min-width: 320px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .group-table-header {
+    grid-template-columns: 28px 1fr;
+    gap: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .group-letter {
+    font-size: 28px;
+  }
+
+  .group-row {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .group-row-team {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .group-row-team .team-name {
+    flex: 1;
+    min-width: 0;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    white-space: nowrap;
+  }
+
+  .group-table-cols span:nth-child(5),
+  .group-table-cols span:nth-child(6),
+  .group-row-stats span:nth-child(5),
+  .group-row-stats span:nth-child(6) {
+    display: none;
+  }
+
+  .group-table-cols,
+  .group-row-stats {
+    grid-template-columns: repeat(5, 17px) 24px;
+    gap: 2px;
+  }
+
+  .group-row-stats .pts {
+    font-size: 13px;
   }
 
   .bracket-col {
@@ -87,16 +136,10 @@
     font-size: 26px;
   }
 
-  .group-table-cols span:nth-child(5),
-  .group-table-cols span:nth-child(6),
-  .group-row-stats span:nth-child(5),
-  .group-row-stats span:nth-child(6) {
-    display: none;
-  }
-
   .group-table-cols,
   .group-row-stats {
-    grid-template-columns: repeat(5, 20px) 28px;
+    grid-template-columns: repeat(5, 16px) 22px;
+    gap: 1px;
   }
 
   .bracket-col {
