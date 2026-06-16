@@ -6,33 +6,41 @@ const os = require("os");
 const path = require("path");
 const { execSync } = require("child_process");
 
+const ROOT = path.join(__dirname, "..");
+const APP_JS = path.join(ROOT, "app.js");
+
 const LOCKED_MAP_HELPER =
   "function buildLockedPositionsMap(A){const V=new Map;for(const[I,U]of A){const l=new Map;U[0]&&l.set(1,U[0].teamCode),U[1]&&l.set(2,U[1].teamCode),U[2]&&l.set(3,U[2].teamCode),V.set(I,l)}return V}";
 
 const LEGACY_RU_HELPER =
   "function rU(A){const V=new Map;for(const[I,U]of A){const l=new Map;U[0]&&l.set(1,U[0].teamCode),U[1]&&l.set(2,U[1].teamCode),U[2]&&l.set(3,U[2].teamCode),V.set(I,l)}return V}";
 
-function extractModuleCode(html) {
-  const m = html.match(/<script type="module" crossorigin>([\s\S]*?)<\/script>/);
-  if (!m) throw new Error("module script not found in index.html");
-  return m[1];
+const REACT_ACTIVE_ELEMENT_HELPER =
+  'function wU(A){if(A=A||(typeof document<"u"?document:void 0),typeof A>"u")return null;try{return A.activeElement||A.body}catch{return A.body}}';
+
+const LEGACY_FORM_VERDICT_HELPER =
+  "function wU(A,V,I){if(A.homeTeam.kind";
+
+function readBundle() {
+  return fs.readFileSync(APP_JS, "utf8");
 }
 
-function sanitizeBundleHtml(html) {
-  let out = html;
+function writeBundle(code) {
+  fs.writeFileSync(APP_JS, code);
+}
 
-  // Legacy helper name collides with React's top-level `var rU` in ES modules.
+function sanitizeBundle(code) {
+  let out = code;
+
   if (out.includes(LEGACY_RU_HELPER)) {
     out = out.replaceAll(LEGACY_RU_HELPER, LOCKED_MAP_HELPER);
   }
   out = out.replace(/([^a-zA-Z0-9_$])rU\(/g, "$1buildLockedPositionsMap(");
 
-  // Idempotent: drop accidental double-inserts of the helper.
   while (out.includes(LOCKED_MAP_HELPER + LOCKED_MAP_HELPER)) {
     out = out.replace(LOCKED_MAP_HELPER + LOCKED_MAP_HELPER, LOCKED_MAP_HELPER);
   }
 
-  // BZ: lockedPositions alias must not share a name with editing state in one const chain.
   out = out.replaceAll(
     "lockedPositions:W}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]=S.useState(null)",
     "lockedPositions:e}=Xl(),{setResult:U,clearResult:l}=hU(),[qN,rN]=S.useState(null)"
@@ -48,11 +56,25 @@ function sanitizeBundleHtml(html) {
     "editing:qN===F.id,onClick:()=>rN(qN===F.id?null:F.id),onSave:h=>{U(F.id,h),rN(null)},onClear:()=>{l(F.id),rN(null)},onCancel:()=>rN(null)"
   );
 
+  if (out.includes(LEGACY_FORM_VERDICT_HELPER)) {
+    out = out.replace(
+      LEGACY_FORM_VERDICT_HELPER,
+      "function computeFormVerdict(A,V,I){if(!A||!A.homeTeam||!A.awayTeam)return null;if(A.homeTeam.kind"
+    );
+  }
+  out = out.replaceAll("!I?wU(V,U,l):null", "!I?computeFormVerdict(V,U,l):null");
+
+  if (!out.includes(REACT_ACTIVE_ELEMENT_HELPER)) {
+    out = out.replace(
+      "A!==I?(V.setValue(A),!0):!1}function e1(A,V){",
+      `A!==I?(V.setValue(A),!0):!1}${REACT_ACTIVE_ELEMENT_HELPER}function e1(A,V){`
+    );
+  }
+
   return out;
 }
 
-function validateModuleSyntax(html) {
-  const code = extractModuleCode(html);
+function validateModuleSyntax(code) {
   const tmp = path.join(os.tmpdir(), `wc-bundle-${process.pid}.mjs`);
   fs.writeFileSync(tmp, code);
   try {
@@ -71,9 +93,13 @@ function validateModuleSyntax(html) {
 }
 
 module.exports = {
+  APP_JS,
   LOCKED_MAP_HELPER,
   LEGACY_RU_HELPER,
-  extractModuleCode,
-  sanitizeBundleHtml,
+  REACT_ACTIVE_ELEMENT_HELPER,
+  LEGACY_FORM_VERDICT_HELPER,
+  readBundle,
+  writeBundle,
+  sanitizeBundle,
   validateModuleSyntax,
 };

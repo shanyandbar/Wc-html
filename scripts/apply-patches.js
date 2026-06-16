@@ -5,12 +5,11 @@ const fs = require("fs");
 const path = require("path");
 const {
   LOCKED_MAP_HELPER,
-  sanitizeBundleHtml,
+  readBundle,
+  writeBundle,
+  sanitizeBundle,
   validateModuleSyntax,
 } = require("./bundle-sanitize");
-
-const ROOT = path.join(__dirname, "..");
-const INDEX = path.join(ROOT, "index.html");
 
 /** @type {{ id: string, find: string, replace: string }[]} */
 const patches = [
@@ -44,7 +43,7 @@ const patches = [
     id: "verdict-form-english",
     find: 'const OZ={verdictLabel:{en:"Verdict",he:"תחזית"},draw:{en:"Draw",he:"תיקו"},correct:{en:"✓ correct",he:"✓ צדק"},missed:{en:"✗ missed",he:"✗ פספס"}};function kU(A,V){return OZ[A][V]}function Vd({matchId:A,match:V,hasResult:I}){const{lang:U}=Ad(),[l,W]=S.useState(!1),N=IN(A);if(!N)return null;const a=N.preTournament;let m=null;if(I&&V.result){const t=V.homeTeam.kind==="team"?V.homeTeam.code:null,Z=V.awayTeam.kind==="team"?V.awayTeam.code:null;if(t&&Z){let h;if(V.stage==="group")V.result.home>V.result.away?h=t:V.result.away>V.result.home?h=Z:h="draw";else{const e=dU(V.result,t,Z);h=(e==null?void 0:e.winner)??"draw"}m=h===a.winner?"right":"wrong"}}const d=a.winner==="draw"?null:WV(a.winner),F=a.winner==="draw"?kU("draw",U):(d==null?void 0:d.name)??a.winner;return C.jsxs("div",{className:`verdict ${m??""} ${l?"open":"closed"}`,children:[C.jsxs("button",{type:"button",className:"verdict-head",onClick:()=>W(t=>!t),"aria-expanded":l,children:[C.jsx("span",{className:"verdict-label",children:kU("verdictLabel",U)}),C.jsx("span",{className:"verdict-pick",children:F}),C.jsxs("span",{className:"verdict-confidence",children:[a.confidence,"%"]}),m&&C.jsx("span",{className:`verdict-accuracy verdict-accuracy-${m}`,children:kU(m==="right"?"correct":"missed",U)}),C.jsx("span",{className:"verdict-chev","aria-hidden":"true",children:l?"▴":"▾"})]}),l&&C.jsx("div",{className:"verdict-text",dir:U==="he"?"rtl":"ltr",lang:U,children:a.text[U]})]})}',
     replace:
-      'const OZ={verdictLabel:"Verdict",draw:"Draw",correct:"✓ correct",missed:"✗ missed"};function kU(A){return OZ[A]}function wU(A,V,I){if(A.homeTeam.kind!=="team"||A.awayTeam.kind!=="team")return null;const U=A.homeTeam.code,l=A.awayTeam.code,W=A.group??WV(U)?.group??WV(l)?.group;if(!W)return null;const N=V.get(W);if(!N)return null;function a(m){const d=N.find(F=>F.teamCode===m);if(!d)return{pts:0,gd:0,form:0};const F=I.filter(t=>t.stage==="group"&&t.group===W&&t.result&&(t.homeTeam.code===m||t.awayTeam.code===m)).slice(-2);let t=0;for(const Z of F){const h=Z.homeTeam.code===m?Z.result.home:Z.result.away,e=Z.homeTeam.code===m?Z.result.away:Z.result.home;t+=h>e?3:h<e?0:1}return{pts:d.points,gd:d.goalDiff,form:t}}const m=a(U),d=a(l),F=m.pts+m.gd*.4+m.form*2,t=d.pts+d.gd*.4+d.form*2;if(F+t===0)return{winner:"draw",confidence:33,text:"No tournament form yet — too close to call."};let Z,h;if(Math.abs(F-t)<1.5){Z="draw";h=42}else if(F>t){Z=U;h=Math.min(88,Math.round(52+(F-t)*7))}else{Z=l;h=Math.min(88,Math.round(52+(t-F)*7))}const e=WV(U)?.name??U,E=WV(l)?.name??l,i=Z==="draw"?"a draw":WV(Z)?.name??Z;return{winner:Z,confidence:h,text:`${e}: ${m.pts} pts (last 2: ${m.form} pts). ${E}: ${d.pts} pts (last 2: ${d.form} pts). Form favors ${i}.`}}function Vd({matchId:A,match:V,hasResult:I}){const{standings:U,matches:l}=Xl(),[W,N]=S.useState(!1),a=IN(A);if(!a)return null;const m=a.preTournament,d=!I?wU(V,U,l):null;let F=null;if(I&&V.result){const t=V.homeTeam.kind==="team"?V.homeTeam.code:null,Z=V.awayTeam.kind==="team"?V.awayTeam.code:null;if(t&&Z){let h;if(V.stage==="group")V.result.home>V.result.away?h=t:V.result.away>V.result.home?h=Z:h="draw";else{const e=dU(V.result,t,Z);h=(e==null?void 0:e.winner)??"draw"}F=h===m.winner?"right":"wrong"}}const e=m.winner==="draw"?null:WV(m.winner),E=m.winner==="draw"?kU("draw"):(e==null?void 0:e.name)??m.winner,i=d&&(d.winner==="draw"?kU("draw"):(WV(d.winner)?.name??d.winner));return C.jsxs("div",{className:`verdict ${F??""} ${W?"open":"closed"}`,children:[C.jsxs("button",{type:"button",className:"verdict-head",onClick:()=>N(t=>!t),"aria-expanded":W,children:[C.jsx("span",{className:"verdict-label",children:kU("verdictLabel")}),C.jsx("span",{className:"verdict-pre-label",children:"Pre-tournament"}),C.jsx("span",{className:"verdict-pick",children:E}),C.jsxs("span",{className:"verdict-confidence",children:[m.confidence,"%"]}),F&&C.jsx("span",{className:`verdict-accuracy verdict-accuracy-${F}`,children:kU(F==="right"?"correct":"missed")}),C.jsx("span",{className:"verdict-chev","aria-hidden":"true",children:W?"▴":"▾"})]}),W&&C.jsxs(C.Fragment,{children:[C.jsx("div",{className:"verdict-text",children:m.text.en}),d&&C.jsxs("div",{className:"verdict-form",children:[C.jsxs("div",{className:"verdict-head",style:{cursor:"default"},children:[C.jsx("span",{className:"verdict-form-label",children:"Form pick"}),C.jsx("span",{className:"verdict-pick",children:i}),C.jsxs("span",{className:"verdict-confidence",children:[d.confidence,"%"]})]}),C.jsx("div",{className:"verdict-text",children:d.text})]})]})]})}',
+      'const OZ={verdictLabel:"Verdict",draw:"Draw",correct:"✓ correct",missed:"✗ missed"};function kU(A){return OZ[A]}function computeFormVerdict(A,V,I){if(!A||!A.homeTeam||!A.awayTeam)return null;if(A.homeTeam.kind!=="team"||A.awayTeam.kind!=="team")return null;const U=A.homeTeam.code,l=A.awayTeam.code,W=A.group??WV(U)?.group??WV(l)?.group;if(!W)return null;const N=V.get(W);if(!N)return null;function a(m){const d=N.find(F=>F.teamCode===m);if(!d)return{pts:0,gd:0,form:0};const F=I.filter(t=>t.stage==="group"&&t.group===W&&t.result&&(t.homeTeam.code===m||t.awayTeam.code===m)).slice(-2);let t=0;for(const Z of F){const h=Z.homeTeam.code===m?Z.result.home:Z.result.away,e=Z.homeTeam.code===m?Z.result.away:Z.result.home;t+=h>e?3:h<e?0:1}return{pts:d.points,gd:d.goalDiff,form:t}}const m=a(U),d=a(l),F=m.pts+m.gd*.4+m.form*2,t=d.pts+d.gd*.4+d.form*2;if(F+t===0)return{winner:"draw",confidence:33,text:"No tournament form yet — too close to call."};let Z,h;if(Math.abs(F-t)<1.5){Z="draw";h=42}else if(F>t){Z=U;h=Math.min(88,Math.round(52+(F-t)*7))}else{Z=l;h=Math.min(88,Math.round(52+(t-F)*7))}const e=WV(U)?.name??U,E=WV(l)?.name??l,i=Z==="draw"?"a draw":WV(Z)?.name??Z;return{winner:Z,confidence:h,text:`${e}: ${m.pts} pts (last 2: ${m.form} pts). ${E}: ${d.pts} pts (last 2: ${d.form} pts). Form favors ${i}.`}}function Vd({matchId:A,match:V,hasResult:I}){const{standings:U,matches:l}=Xl(),[W,N]=S.useState(!1),a=IN(A);if(!a)return null;const m=a.preTournament,d=!I?computeFormVerdict(V,U,l):null;let F=null;if(I&&V.result){const t=V.homeTeam.kind==="team"?V.homeTeam.code:null,Z=V.awayTeam.kind==="team"?V.awayTeam.code:null;if(t&&Z){let h;if(V.stage==="group")V.result.home>V.result.away?h=t:V.result.away>V.result.home?h=Z:h="draw";else{const e=dU(V.result,t,Z);h=(e==null?void 0:e.winner)??"draw"}F=h===m.winner?"right":"wrong"}}const e=m.winner==="draw"?null:WV(m.winner),E=m.winner==="draw"?kU("draw"):(e==null?void 0:e.name)??m.winner,i=d&&(d.winner==="draw"?kU("draw"):(WV(d.winner)?.name??d.winner));return C.jsxs("div",{className:`verdict ${F??""} ${W?"open":"closed"}`,children:[C.jsxs("button",{type:"button",className:"verdict-head",onClick:()=>N(t=>!t),"aria-expanded":W,children:[C.jsx("span",{className:"verdict-label",children:kU("verdictLabel")}),C.jsx("span",{className:"verdict-pre-label",children:"Pre-tournament"}),C.jsx("span",{className:"verdict-pick",children:E}),C.jsxs("span",{className:"verdict-confidence",children:[m.confidence,"%"]}),F&&C.jsx("span",{className:`verdict-accuracy verdict-accuracy-${F}`,children:kU(F==="right"?"correct":"missed")}),C.jsx("span",{className:"verdict-chev","aria-hidden":"true",children:W?"▴":"▾"})]}),W&&C.jsxs(C.Fragment,{children:[C.jsx("div",{className:"verdict-text",children:m.text.en}),d&&C.jsxs("div",{className:"verdict-form",children:[C.jsxs("div",{className:"verdict-head",style:{cursor:"default"},children:[C.jsx("span",{className:"verdict-form-label",children:"Form pick"}),C.jsx("span",{className:"verdict-pick",children:i}),C.jsxs("span",{className:"verdict-confidence",children:[d.confidence,"%"]})]}),C.jsx("div",{className:"verdict-text",children:d.text})]})]})]})}',
   },
   {
     id: "fc-autosave",
@@ -164,47 +163,84 @@ const patches = [
   },
 ];
 
+const INDEX = path.join(__dirname, "..", "index.html");
+
+function patchIndexHtml(html) {
+  const patches = [
+    {
+      id: "favicon",
+      find: '<link rel="icon" type="image/svg+xml" href="" />',
+      replace:
+        '<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>" />',
+    },
+    {
+      id: "mobile-css-link",
+      find: "  </head>",
+      replace: '    <link rel="stylesheet" href="mobile.css">\n  </head>',
+      skipIf: (html) => html.includes('href="mobile.css"'),
+    },
+  ];
+  let out = html;
+  for (const patch of patches) {
+    if (patch.skipIf?.(out)) continue;
+    if (!out.includes(patch.find)) {
+      if (patch.replace && out.includes(patch.replace)) continue;
+      if (patch.id === "mobile-css-link" && out.includes("mobile.css")) continue;
+      continue;
+    }
+    if (patch.replace !== "" && out.includes(patch.replace) && patch.find !== patch.replace) {
+      continue;
+    }
+    out = out.replace(patch.find, patch.replace);
+  }
+  return out;
+}
+
 function main() {
-  let html = fs.readFileSync(INDEX, "utf8");
-  const before = html.length;
+  let code = readBundle();
+  const before = code.length;
   const results = [];
 
   for (const patch of patches) {
-    if (!html.includes(patch.find)) {
-      if (patch.replace && html.includes(patch.replace)) {
+    if (patch.id === "favicon" || patch.id === "mobile-css-link") {
+      continue;
+    }
+    if (!code.includes(patch.find)) {
+      if (patch.replace && code.includes(patch.replace)) {
         results.push({ id: patch.id, ok: true, skipped: true });
         continue;
       }
-      if (patch.id === "mobile-css-link" && html.includes("mobile.css")) {
+      if (patch.id === "english-remove-toggle" && !code.includes('onClick:()=>U("he")')) {
         results.push({ id: patch.id, ok: true, skipped: true });
         continue;
       }
-      if (patch.id === "english-remove-toggle" && !html.includes('onClick:()=>U("he")')) {
-        results.push({ id: patch.id, ok: true, skipped: true });
-        continue;
-      }
-      if (patch.id === "bracket-helper" && html.includes(LOCKED_MAP_HELPER)) {
+      if (patch.id === "bracket-helper" && code.includes(LOCKED_MAP_HELPER)) {
         results.push({ id: patch.id, ok: true, skipped: true });
         continue;
       }
       results.push({ id: patch.id, ok: false, error: "find string not found" });
       continue;
     }
-    if (patch.replace !== "" && html.includes(patch.replace) && patch.find !== patch.replace) {
+    if (patch.replace !== "" && code.includes(patch.replace) && patch.find !== patch.replace) {
       results.push({ id: patch.id, ok: true, skipped: true });
       continue;
     }
-    html = html.replace(patch.find, patch.replace);
+    code = code.replace(patch.find, patch.replace);
     results.push({ id: patch.id, ok: true });
   }
 
-  html = sanitizeBundleHtml(html);
-  fs.writeFileSync(INDEX, html);
-  console.log(JSON.stringify({ before, after: html.length, results }, null, 2));
+  code = sanitizeBundle(code);
+  writeBundle(code);
 
-  const syntaxError = validateModuleSyntax(html);
+  let html = fs.readFileSync(INDEX, "utf8");
+  html = patchIndexHtml(html);
+  fs.writeFileSync(INDEX, html);
+
+  console.log(JSON.stringify({ before, after: code.length, results }, null, 2));
+
+  const syntaxError = validateModuleSyntax(code);
   if (syntaxError) {
-    console.error("module syntax error after patches:", syntaxError);
+    console.error("app.js syntax error after patches:", syntaxError);
     process.exit(1);
   }
 
