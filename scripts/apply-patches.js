@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const {
   LOCKED_MAP_HELPER,
+  SORT_BRACKET_HELPER,
   readBundle,
   writeBundle,
   sanitizeBundle,
@@ -130,13 +131,24 @@ const patches = [
   {
     id: "bracket-helper",
     find: "function zZ(){var e,E;",
-    replace: `${LOCKED_MAP_HELPER}function zZ(){var e,E;`,
+    replace: `${LOCKED_MAP_HELPER}${SORT_BRACKET_HELPER}function zZ(){var e,E;`,
+  },
+  {
+    id: "bracket-sort-helper",
+    find: `${LOCKED_MAP_HELPER}function zZ`,
+    replace: `${LOCKED_MAP_HELPER}${SORT_BRACKET_HELPER}function zZ`,
   },
   {
     id: "bracket-zZ",
     find: 'function zZ(){var e,E;const{matches:A,resolved:V,isGroupStageDone:I}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]=S.useState(null),a=A.filter(i=>i.stage==="R32"),m=A.filter(i=>i.stage==="R16"),d=A.filter(i=>i.stage==="QF"),F=A.filter(i=>i.stage==="SF"),t=A.find(i=>i.stage==="final"),Z=A.find(i=>i.stage==="3rd"),h=W?A.find(i=>i.id===W):null;return C.jsxs("div",{className:"bracket-page",children:[C.jsxs("header",{className:"bracket-header",children:[C.jsx("h1",{children:"The Road to the Final"}),C.jsxs("p",{children:["32 teams. 6 rounds. 1 trophy. ",!I&&C.jsx("span",{className:"bracket-warning",children:" Bracket fills automatically once all 72 group games are entered."})]})]}),C.jsxs("div",{className:"bracket-rounds",children:[C.jsx(DV,{title:"Round of 32",matches:a,resolved:V,onClick:i=>N(i)}),C.jsx(DV,{title:"Round of 16",matches:m,resolved:V,onClick:i=>N(i)}),C.jsx(DV,{title:"Quarter-finals",matches:d,resolved:V,onClick:i=>N(i)}),C.jsx(DV,{title:"Semi-finals",matches:F,resolved:V,onClick:i=>N(i)}),C.jsx(DV,{title:"Final",matches:t?[t]:[],resolved:V,onClick:i=>N(i),highlight:!0}),Z&&C.jsx(DV,{title:"3rd Place",matches:[Z],resolved:V,onClick:i=>N(i)})]}),h&&C.jsx(LZ,{match:h,homeCode:((e=V.get(h.id))==null?void 0:e.home)??null,awayCode:((E=V.get(h.id))==null?void 0:E.away)??null,onSave:i=>{U(h.id,i),N(null)},onClear:()=>{l(h.id),N(null)},onClose:()=>N(null)})]})}',
     replace:
-      'function zZ(){var e,E;const{matches:A,standings:i,lockedPositions:g,resolved:R,isGroupStageDone:T}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]=S.useState(null),[a,m]=S.useState(!1),d=S.useMemo(()=>{if(!a)return R;const c=buildLockedPositionsMap(i),Y=tZ(i);let B=new Map;const Q=TZ(A),p=Y.map(k=>k.group),b=hZ(p,Q);b&&(B=b);return eZ(A,c,B)},[a,A,i,R]),F=A.filter(c=>c.stage==="R32"),t=A.filter(c=>c.stage==="R16"),Z=A.filter(c=>c.stage==="QF"),h=A.filter(c=>c.stage==="SF"),cA=A.find(c=>c.stage==="final"),aV=A.find(c=>c.stage==="3rd"),GA=W?A.find(c=>c.id===W):null;return C.jsxs("div",{className:"bracket-page",children:[C.jsxs("header",{className:"bracket-header",children:[C.jsx("h1",{children:"The Road to the Final"}),C.jsxs("p",{children:["32 teams. 6 rounds. 1 trophy. ",!T&&C.jsx("span",{className:"bracket-warning",children:" Secured qualifiers appear as they clinch. Use preview for the full bracket from current standings."})]})]}),C.jsxs("div",{className:"bracket-controls",children:[C.jsx("button",{type:"button",className:`bracket-preview-btn ${a?"active":""}`,onClick:()=>m(c=>!c),children:a?"Hide standings preview":"Preview bracket from current standings"}),a&&C.jsx("p",{className:"bracket-preview-banner",children:"Preview only — knockout pairings change if results shift."})]}),C.jsxs("div",{className:"bracket-rounds",children:[C.jsx(DV,{title:"Round of 32",matches:F,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Round of 16",matches:t,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Quarter-finals",matches:Z,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Semi-finals",matches:h,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Final",matches:cA?[cA]:[],resolved:d,locked:g,projected:a,onClick:c=>N(c),highlight:!0}),aV&&C.jsx(DV,{title:"3rd Place",matches:[aV],resolved:d,locked:g,projected:a,onClick:c=>N(c)})]}),GA&&C.jsx(LZ,{match:GA,homeCode:((e=d.get(GA.id))==null?void 0:e.home)??null,awayCode:((E=d.get(GA.id))==null?void 0:E.away)??null,onSave:c=>{U(GA.id,c),N(null)},onClear:()=>{l(GA.id),N(null)},onClose:()=>N(null)})]})}',
+      'function zZ(){var e,E;const{matches:A,standings:i,lockedPositions:g,resolved:R,isGroupStageDone:T}=Xl(),{setResult:U,clearResult:l}=hU(),[W,N]=S.useState(null),[a,m]=S.useState(!1),d=S.useMemo(()=>{if(!a)return R;const c=buildLockedPositionsMap(i),Y=tZ(i);let B=new Map;const Q=TZ(A),p=Y.map(k=>k.group),b=hZ(p,Q);b&&(B=b);return eZ(A,c,B)},[a,A,i,R]),cA=A.find(c=>c.stage==="final"),aV=A.find(c=>c.stage==="3rd"),hRaw=A.filter(c=>c.stage==="SF"),h=sortBracketMatches(hRaw,cA?[cA]:[]),Z=sortBracketMatches(A.filter(c=>c.stage==="QF"),h),t=sortBracketMatches(A.filter(c=>c.stage==="R16"),Z),F=sortBracketMatches(A.filter(c=>c.stage==="R32"),t),GA=W?A.find(c=>c.id===W):null;return C.jsxs("div",{className:"bracket-page",children:[C.jsxs("header",{className:"bracket-header",children:[C.jsx("h1",{children:"The Road to the Final"}),C.jsxs("p",{children:["32 teams. 6 rounds. 1 trophy. ",!T&&C.jsx("span",{className:"bracket-warning",children:" Secured qualifiers appear as they clinch. Use preview for the full bracket from current standings."})]})]}),C.jsxs("div",{className:"bracket-controls",children:[C.jsx("button",{type:"button",className:`bracket-preview-btn ${a?"active":""}`,onClick:()=>m(c=>!c),children:a?"Hide standings preview":"Preview bracket from current standings"}),a&&C.jsx("p",{className:"bracket-preview-banner",children:"Preview only — knockout pairings change if results shift."})]}),C.jsxs("div",{className:"bracket-rounds",children:[C.jsx(DV,{title:"Round of 32",matches:F,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Round of 16",matches:t,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Quarter-finals",matches:Z,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Semi-finals",matches:h,resolved:d,locked:g,projected:a,onClick:c=>N(c)}),C.jsx(DV,{title:"Final",matches:cA?[cA]:[],resolved:d,locked:g,projected:a,onClick:c=>N(c),highlight:!0}),aV&&C.jsx(DV,{title:"3rd Place",matches:[aV],resolved:d,locked:g,projected:a,onClick:c=>N(c)})]}),GA&&C.jsx(LZ,{match:GA,homeCode:((e=d.get(GA.id))==null?void 0:e.home)??null,awayCode:((E=d.get(GA.id))==null?void 0:E.away)??null,onSave:c=>{U(GA.id,c),N(null)},onClear:()=>{l(GA.id),N(null)},onClose:()=>N(null)})]})}',
+  },
+  {
+    id: "bracket-zZ-sort",
+    find: 'F=A.filter(c=>c.stage==="R32"),t=A.filter(c=>c.stage==="R16"),Z=A.filter(c=>c.stage==="QF"),h=A.filter(c=>c.stage==="SF"),cA=A.find(c=>c.stage==="final"),aV=A.find(c=>c.stage==="3rd"),',
+    replace:
+      'cA=A.find(c=>c.stage==="final"),aV=A.find(c=>c.stage==="3rd"),hRaw=A.filter(c=>c.stage==="SF"),h=sortBracketMatches(hRaw,cA?[cA]:[]),Z=sortBracketMatches(A.filter(c=>c.stage==="QF"),h),t=sortBracketMatches(A.filter(c=>c.stage==="R16"),Z),F=sortBracketMatches(A.filter(c=>c.stage==="R32"),t),',
   },
   {
     id: "bracket-DV",
@@ -215,6 +227,17 @@ function main() {
         continue;
       }
       if (patch.id === "bracket-helper" && code.includes(LOCKED_MAP_HELPER)) {
+        results.push({ id: patch.id, ok: true, skipped: true });
+        continue;
+      }
+      if (patch.id === "bracket-sort-helper" && code.includes(SORT_BRACKET_HELPER)) {
+        results.push({ id: patch.id, ok: true, skipped: true });
+        continue;
+      }
+      if (
+        patch.id === "bracket-zZ" &&
+        code.includes('sortBracketMatches(A.filter(c=>c.stage==="R32"),t)')
+      ) {
         results.push({ id: patch.id, ok: true, skipped: true });
         continue;
       }

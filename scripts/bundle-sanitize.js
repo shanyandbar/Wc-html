@@ -12,6 +12,9 @@ const APP_JS = path.join(ROOT, "app.js");
 const LOCKED_MAP_HELPER =
   "function buildLockedPositionsMap(A){const V=new Map;for(const[I,U]of A){const l=new Map;U[0]&&l.set(1,U[0].teamCode),U[1]&&l.set(2,U[1].teamCode),U[2]&&l.set(3,U[2].teamCode),V.set(I,l)}return V}";
 
+const SORT_BRACKET_HELPER =
+  'function sortBracketMatches(A,V){if(!V.length)return[...A].sort((I,U)=>I.id.localeCompare(U.id));const l=new Map(A.map(W=>[W.id,W])),W=[],N=new Set;for(const a of V)for(const m of[a.homeTeam,a.awayTeam])if(m.kind==="matchWinner"){const d=l.get(m.matchId);d&&!N.has(d.id)&&(W.push(d),N.add(d.id))}for(const a of A)N.has(a.id)||W.push(a);return W}';
+
 const LEGACY_RU_HELPER =
   "function rU(A){const V=new Map;for(const[I,U]of A){const l=new Map;U[0]&&l.set(1,U[0].teamCode),U[1]&&l.set(2,U[1].teamCode),U[2]&&l.set(3,U[2].teamCode),V.set(I,l)}return V}";
 
@@ -39,6 +42,10 @@ function sanitizeBundle(code) {
 
   while (out.includes(LOCKED_MAP_HELPER + LOCKED_MAP_HELPER)) {
     out = out.replace(LOCKED_MAP_HELPER + LOCKED_MAP_HELPER, LOCKED_MAP_HELPER);
+  }
+
+  while (out.includes(SORT_BRACKET_HELPER + SORT_BRACKET_HELPER)) {
+    out = out.replace(SORT_BRACKET_HELPER + SORT_BRACKET_HELPER, SORT_BRACKET_HELPER);
   }
 
   out = out.replaceAll(
@@ -95,6 +102,7 @@ function validateModuleSyntax(code) {
 module.exports = {
   APP_JS,
   LOCKED_MAP_HELPER,
+  SORT_BRACKET_HELPER,
   LEGACY_RU_HELPER,
   REACT_ACTIVE_ELEMENT_HELPER,
   LEGACY_FORM_VERDICT_HELPER,
