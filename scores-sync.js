@@ -185,8 +185,8 @@
   function injectUi() {
     if (document.getElementById("wc-score-sync")) return true;
 
-    const header = document.querySelector(".app-header");
-    if (!header) return false;
+    const nav = document.querySelector(".app-nav");
+    if (!nav) return false;
 
     const wrap = document.createElement("div");
     wrap.id = "wc-score-sync";
@@ -196,15 +196,16 @@
 
     const style = document.createElement("style");
     style.textContent =
-      "#wc-score-sync{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;margin-left:12px;font-family:Inter,system-ui,sans-serif}" +
-      "#wc-score-sync-btn{padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#E11D2E,#B0101F);border:0;border-radius:999px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35)}" +
+      "#wc-score-sync{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:4px;font-family:Inter,system-ui,sans-serif}" +
+      "#wc-score-sync-btn{padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#E11D2E,#B0101F);border:0;border-radius:999px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);white-space:nowrap}" +
       "#wc-score-sync-btn:hover{transform:translateY(-1px)}" +
       "#wc-score-sync-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}" +
-      "#wc-score-sync-status{font-size:10px;color:#8089BC;background:#0E1233db;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);white-space:nowrap}" +
-      "@media (max-width:640px){.app-header{position:relative;padding-right:72px}#wc-score-sync{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));margin-left:0;z-index:1}#wc-score-sync-btn{padding:6px 10px;font-size:10px}#wc-score-sync-status{display:none}}";
+      "#wc-score-sync-status{font-size:10px;color:#8089BC;white-space:nowrap;display:none}" +
+      "@media (min-width:641px){#wc-score-sync{flex-direction:column;align-items:flex-end;gap:6px;margin-left:12px}#wc-score-sync-status{display:block;background:#0E1233db;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px)}}" +
+      "@media (max-width:640px){#wc-score-sync-btn{padding:8px 12px;font-size:11px}}";
 
     document.head.appendChild(style);
-    header.appendChild(wrap);
+    nav.appendChild(wrap);
 
     const btn = document.getElementById("wc-score-sync-btn");
     const status = document.getElementById("wc-score-sync-status");

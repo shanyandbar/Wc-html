@@ -1,6 +1,11 @@
 /* WC 2026 mobile & enhancement styles (external to keep index.html patches small) */
 
 @media (max-width: 640px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   .groups-page,
   .schedule-page,
   .bracket-page,
@@ -39,61 +44,92 @@
   }
 
   .group-table {
-    overflow-x: visible;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   .group-table-header,
-  .group-row {
+  .group-table .group-row {
     min-width: 0;
     width: 100%;
   }
 
-  .group-table-header {
-    grid-template-columns: 28px 1fr;
+  .group-table .group-table-header {
+    display: flex;
+    align-items: center;
     gap: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 14px 12px 8px;
   }
 
-  .group-letter {
+  .group-table .group-letter {
+    flex-shrink: 0;
     font-size: 28px;
   }
 
-  .group-row {
-    grid-template-columns: 22px minmax(0, 1fr) auto;
-    gap: 6px;
-    padding-left: 12px;
-    padding-right: 12px;
+  .group-table .group-table-cols {
+    margin-left: auto;
+    flex-shrink: 0;
   }
 
-  .group-row-team {
+  .group-table .group-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .group-table .group-row-pos {
+    flex: 0 0 22px;
+  }
+
+  .group-table .group-row-team {
+    flex: 1 1 0;
     min-width: 0;
     overflow: hidden;
   }
 
-  .group-row-team .team-name {
-    flex: 1;
-    min-width: 0;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    white-space: nowrap;
+  .group-table .group-row-stats {
+    flex: 0 0 auto;
   }
 
-  .group-table-cols span:nth-child(5),
-  .group-table-cols span:nth-child(6),
-  .group-row-stats span:nth-child(5),
-  .group-row-stats span:nth-child(6) {
+  .group-table .group-row-team .team-name {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    -webkit-box-orient: unset;
+  }
+
+  .group-table .group-table-cols span:nth-child(5),
+  .group-table .group-table-cols span:nth-child(6),
+  .group-table .group-row-stats span:nth-child(5),
+  .group-table .group-row-stats span:nth-child(6) {
     display: none;
   }
 
-  .group-table-cols,
-  .group-row-stats {
-    grid-template-columns: repeat(5, 17px) 24px;
-    gap: 2px;
+  .group-table .group-table-cols,
+  .group-table .group-row-stats {
+    grid-template-columns: repeat(5, 15px) 20px;
+    gap: 1px;
+    font-size: 11px;
   }
 
-  .group-row-stats .pts {
-    font-size: 13px;
+  .group-table .group-row-stats {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  .group-table .group-row-stats .pts {
+    font-size: 12px;
+  }
+
+  .group-table .group-row-team .flag-sm {
+    width: 22px;
+    height: 16px;
   }
 
   .bracket-col {
@@ -136,9 +172,9 @@
     font-size: 26px;
   }
 
-  .group-table-cols,
-  .group-row-stats {
-    grid-template-columns: repeat(5, 16px) 22px;
+  .group-table .group-table-cols,
+  .group-table .group-row-stats {
+    grid-template-columns: repeat(5, 14px) 18px;
     gap: 1px;
   }
 
