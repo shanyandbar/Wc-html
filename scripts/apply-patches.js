@@ -34,25 +34,25 @@ const patches = [
     id: "fc-autosave",
     find: '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):"");S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G)}',
     replace:
-      '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):""),[WN,cN]=S.useState(!!m);S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G),cN(!0)}S.useEffect(()=>{const G=setTimeout(()=>{if(E===""&&g===""){A.result&&l();return}CV&&UN()},400);return()=>clearTimeout(G)},[E,g,Y,Q,lA,cA,T,k,CV])',
+      '[cA,aV]=S.useState(m!=null&&m.pens?String(m.pens.away):""),[sV,jN]=S.useState(!!m);S.useEffect(()=>{const G=ld=>{ld.key==="Escape"&&W()};return window.addEventListener("keydown",G),()=>window.removeEventListener("keydown",G)},[W]);const GA=parseInt(E,10),tA=parseInt(g,10),qA=!isNaN(GA)&&!isNaN(tA)&&GA>=0&&tA>=0,n=qA&&GA===tA,M=parseInt(Y,10),o=parseInt(Q,10),j=!isNaN(M)&&!isNaN(o)&&M>=GA&&o>=tA,y=j&&M===o,bA=parseInt(lA,10),L=parseInt(cA,10),xA=!isNaN(bA)&&!isNaN(L)&&bA!==L,CV=qA&&(!a||!n||T&&j&&(!y||k&&xA));function UN(){if(!CV)return;const G={home:GA,away:tA};T&&j&&(G.et={home:M,away:o}),k&&xA&&(G.pens={home:bA,away:L}),U(G),jN(!0)}S.useEffect(()=>{const G=setTimeout(()=>{if(E===""&&g===""){A.result&&l();return}CV&&UN()},400);return()=>clearTimeout(G)},[E,g,Y,Q,lA,cA,T,k,CV])',
   },
   {
     id: "fc-save-button",
     find: ',C.jsx("button",{type:"button",className:"inline-btn inline-btn-primary",onClick:UN,disabled:!CV,children:"Save"})',
     replace:
-      ',C.jsx("span",{className:"inline-save-status",children:CV?WN?"Saved":"…":""})',
+      ',C.jsx("span",{className:"inline-save-status",children:CV?sV?"Saved":"…":""})',
   },
   {
     id: "lz-autosave",
     find: 'o=b&&(!N||!lA||Z&&aV&&(!GA||R&&n));function j(){if(!b)return;const L={home:p,away:k};Z&&aV&&(L.et={home:BA,away:cA}),R&&n&&(L.pens={home:tA,away:qA}),U(L)}',
     replace:
-      'o=b&&(!N||!lA||Z&&aV&&(!GA||R&&n)),[xA,CV]=S.useState(!!a);function j(){if(!b)return;const L={home:p,away:k};Z&&aV&&(L.et={home:BA,away:cA}),R&&n&&(L.pens={home:tA,away:qA}),U(L),CV(!0)}S.useEffect(()=>{const L=setTimeout(()=>{if(m===""&&F===""){a&&l();return}o&&j()},400);return()=>clearTimeout(L)},[m,F,e,i,c,B,Z,R,o])',
+      'o=b&&(!N||!lA||Z&&aV&&(!GA||R&&n)),[lN,sN]=S.useState(!!a);function j(){if(!b)return;const L={home:p,away:k};Z&&aV&&(L.et={home:BA,away:cA}),R&&n&&(L.pens={home:tA,away:qA}),U(L),sN(!0)}S.useEffect(()=>{const L=setTimeout(()=>{if(m===""&&F===""){a&&l();return}o&&j()},400);return()=>clearTimeout(L)},[m,F,e,i,c,B,Z,R,o]);return C.jsx',
   },
   {
     id: "lz-save-button",
     find: ',C.jsx("button",{className:"btn btn-primary",onClick:j,disabled:!o,children:"Save result"})',
     replace:
-      ',C.jsx("span",{className:"modal-save-status",children:o?xA?"Saved":"…":""})',
+      ',C.jsx("span",{className:"modal-save-status",children:o?lN?"Saved":"…":""})',
   },
   {
     id: "ft-locked",
