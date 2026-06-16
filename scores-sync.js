@@ -174,8 +174,19 @@
     return `Last synced ${date.toLocaleString()}`;
   }
 
+  function updateSyncBtnLabel() {
+    const btn = document.getElementById("wc-score-sync-btn");
+    if (!btn) return;
+    btn.textContent = window.matchMedia("(max-width: 640px)").matches
+      ? "Sync"
+      : "Sync scores";
+  }
+
   function injectUi() {
-    if (document.getElementById("wc-score-sync")) return;
+    if (document.getElementById("wc-score-sync")) return true;
+
+    const header = document.querySelector(".app-header");
+    if (!header) return false;
 
     const wrap = document.createElement("div");
     wrap.id = "wc-score-sync";
@@ -185,14 +196,15 @@
 
     const style = document.createElement("style");
     style.textContent =
-      "#wc-score-sync{position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-family:Inter,system-ui,sans-serif}" +
+      "#wc-score-sync{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;margin-left:12px;font-family:Inter,system-ui,sans-serif}" +
       "#wc-score-sync-btn{padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,#E11D2E,#B0101F);border:0;border-radius:999px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35)}" +
       "#wc-score-sync-btn:hover{transform:translateY(-1px)}" +
       "#wc-score-sync-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}" +
-      "#wc-score-sync-status{font-size:10px;color:#8089BC;background:#0E1233db;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px)}";
+      "#wc-score-sync-status{font-size:10px;color:#8089BC;background:#0E1233db;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);white-space:nowrap}" +
+      "@media (max-width:640px){.app-header{position:relative;padding-right:72px}#wc-score-sync{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));margin-left:0;z-index:1}#wc-score-sync-btn{padding:6px 10px;font-size:10px}#wc-score-sync-status{display:none}}";
 
     document.head.appendChild(style);
-    document.body.appendChild(wrap);
+    header.appendChild(wrap);
 
     const btn = document.getElementById("wc-score-sync-btn");
     const status = document.getElementById("wc-score-sync-status");
@@ -212,6 +224,27 @@
         status.textContent = formatLastSync(readMeta().lastSync);
       });
     });
+
+    updateSyncBtnLabel();
+    window.addEventListener("resize", updateSyncBtnLabel);
+
+    return true;
+  }
+
+  function ensureUi(callback) {
+    if (injectUi()) {
+      callback();
+      return;
+    }
+
+    const root = document.getElementById("root") || document.body;
+    const observer = new MutationObserver(function () {
+      if (injectUi()) {
+        observer.disconnect();
+        callback();
+      }
+    });
+    observer.observe(root, { childList: true, subtree: true });
   }
 
   let pollTimer = null;
@@ -226,17 +259,18 @@
   }
 
   function init() {
-    injectUi();
-    syncScores({ reload: true }).finally(function () {
-      const status = document.getElementById("wc-score-sync-status");
-      if (status) status.textContent = formatLastSync(readMeta().lastSync);
-      startPolling();
-    });
+    ensureUi(function () {
+      syncScores({ reload: true }).finally(function () {
+        const status = document.getElementById("wc-score-sync-status");
+        if (status) status.textContent = formatLastSync(readMeta().lastSync);
+        startPolling();
+      });
 
-    document.addEventListener("visibilitychange", function () {
-      if (document.visibilityState === "visible") {
-        syncScores({ reload: true });
-      }
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") {
+          syncScores({ reload: true });
+        }
+      });
     });
   }
 

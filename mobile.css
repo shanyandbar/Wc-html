@@ -228,16 +228,3 @@
 body {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
-
-@media (max-width: 480px) {
-  #wc-score-sync {
-    bottom: max(12px, env(safe-area-inset-bottom));
-    right: 12px;
-    left: 12px;
-    align-items: stretch;
-  }
-
-  #wc-score-sync-btn {
-    width: 100%;
-  }
-}
