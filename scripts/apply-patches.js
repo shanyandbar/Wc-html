@@ -9,6 +9,8 @@ const INDEX = path.join(ROOT, "index.html");
 
 /** @type {{ id: string, find: string, replace: string }[]} */
 const patches = [
+/** @type {{ id: string, find: string, replace: string }[]} */
+const patches = [
   {
     id: "favicon",
     find: '<link rel="icon" type="image/svg+xml" href="" />',
